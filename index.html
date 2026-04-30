@@ -1,0 +1,1347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Business Strategy Course</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Plus Jakarta Sans', sans-serif; background: #0d0a4a; overflow: hidden; height: 100vh; width: 100vw; }
+#root { width: 100%; height: 100%; }
+
+.course-shell {
+  width: 100vw; height: 100vh;
+  background: linear-gradient(145deg, #2C37C4 0%, #1A0A82 100%);
+  display: flex; flex-direction: column; position: relative; overflow: hidden;
+}
+.geo-bg { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.geo-bg svg { position: absolute; }
+
+/* TOP BAR */
+.top-bar {
+  position: relative; z-index: 10;
+  display: flex; align-items: center; gap: 16px;
+  padding: 14px 28px;
+  background: rgba(0,0,0,0.18); backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(255,255,255,0.1); flex-shrink: 0;
+}
+.logo-icon { width: 34px; height: 34px; background: #F5B800; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; color: #1A0A82; flex-shrink: 0; }
+.course-title-bar { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.9); }
+.section-tag { font-size: 11px; color: rgba(255,255,255,0.45); font-weight: 600; }
+.progress-area { flex: 1; display: flex; align-items: center; gap: 10px; }
+.progress-track { flex: 1; height: 5px; background: rgba(255,255,255,0.15); border-radius: 99px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, #F5B800, #FFD54F); border-radius: 99px; transition: width 0.5s ease; }
+.progress-label { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.6); white-space: nowrap; }
+.screen-counter { font-size: 12px; font-weight: 700; color: #F5B800; }
+
+/* TTS CONTROLS */
+.tts-controls { display: flex; align-items: center; gap: 6px; }
+.tts-btn {
+  width: 32px; height: 32px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.08); color: white; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; font-size: 14px;
+  transition: all 0.2s; flex-shrink: 0;
+}
+.tts-btn:hover { background: rgba(255,255,255,0.18); }
+.tts-btn.active { background: rgba(245,184,0,0.25); border-color: #F5B800; color: #F5B800; }
+.tts-btn.muted { background: rgba(255,80,80,0.15); border-color: rgba(255,80,80,0.4); color: #f87171; }
+.tts-wave {
+  display: flex; align-items: center; gap: 2px; height: 18px; overflow: hidden;
+}
+.tts-wave span {
+  display: block; width: 3px; background: #F5B800; border-radius: 2px;
+  animation: wave 0.8s ease-in-out infinite;
+}
+.tts-wave span:nth-child(1) { height: 6px; animation-delay: 0s; }
+.tts-wave span:nth-child(2) { height: 14px; animation-delay: 0.1s; }
+.tts-wave span:nth-child(3) { height: 10px; animation-delay: 0.2s; }
+.tts-wave span:nth-child(4) { height: 16px; animation-delay: 0.15s; }
+.tts-wave span:nth-child(5) { height: 8px; animation-delay: 0.05s; }
+@keyframes wave { 0%,100% { transform: scaleY(0.4); } 50% { transform: scaleY(1); } }
+
+/* MAIN CONTENT */
+.screen-content {
+  flex: 1; position: relative; z-index: 5;
+  display: flex; flex-direction: column;
+  padding: 0 36px; overflow: hidden; min-height: 0;
+}
+
+/* BOTTOM NAV */
+.bottom-nav {
+  position: relative; z-index: 10;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 28px;
+  background: rgba(0,0,0,0.2); border-top: 1px solid rgba(255,255,255,0.1); flex-shrink: 0;
+}
+.vo-box {
+  flex: 1; margin: 0 20px;
+  font-size: 11px; color: rgba(255,255,255,0.55); font-style: italic; line-height: 1.4;
+  max-height: 40px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+}
+.nav-btn {
+  display: flex; align-items: center; gap: 8px;
+  padding: 9px 20px; border-radius: 99px; border: none;
+  font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s;
+}
+.nav-btn.prev { background: rgba(255,255,255,0.12); color: white; }
+.nav-btn.prev:hover { background: rgba(255,255,255,0.2); }
+.nav-btn.next { background: #F5B800; color: #1A0A82; }
+.nav-btn.next:hover { background: #FFD54F; transform: scale(1.03); }
+.nav-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none !important; }
+
+/* SCREEN BASE */
+.screen { display: flex; flex-direction: column; height: 100%; padding-top: 20px; }
+.screen-tag { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #F5B800; margin-bottom: 6px; }
+.screen-heading { font-size: clamp(22px, 3vw, 38px); font-weight: 800; color: white; line-height: 1.1; margin-bottom: 6px; }
+.screen-sub { font-size: 14px; color: rgba(255,255,255,0.6); margin-bottom: 18px; font-weight: 500; }
+
+/* SCREEN 1 */
+.intro-layout { display: flex; align-items: center; gap: 40px; height: 100%; }
+.intro-big-text { font-size: clamp(32px, 4.5vw, 56px); font-weight: 800; color: white; line-height: 1.0; margin-bottom: 14px; }
+.highlight { color: #F5B800; }
+.start-btn {
+  display: flex; align-items: center; gap: 10px;
+  padding: 16px 36px; background: #F5B800; color: #1A0A82;
+  border: none; border-radius: 99px; font-family: inherit;
+  font-size: 16px; font-weight: 800; cursor: pointer;
+  transition: all 0.25s; box-shadow: 0 8px 32px rgba(245,184,0,0.4); margin-top: 28px;
+}
+.start-btn:hover { background: #FFD54F; transform: translateY(-2px); box-shadow: 0 12px 40px rgba(245,184,0,0.5); }
+.stat-box { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; padding: 14px 18px; flex: 1; text-align: center; }
+.stat-num { font-size: 26px; font-weight: 800; color: #F5B800; }
+.stat-desc { font-size: 11px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+
+/* OBJECTIVES */
+.obj-list { display: flex; flex-direction: column; gap: 14px; }
+.obj-item { display: flex; align-items: center; gap: 14px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); border-radius: 14px; padding: 18px 22px; animation: slideIn 0.4s ease both; }
+.obj-item:nth-child(2) { animation-delay: 0.1s; }
+.obj-item:nth-child(3) { animation-delay: 0.2s; }
+@keyframes slideIn { from { opacity:0; transform:translateX(-20px); } to { opacity:1; transform:none; } }
+.obj-num { width: 38px; height: 38px; flex-shrink: 0; background: #F5B800; color: #1A0A82; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 15px; }
+.obj-text { font-size: 15px; font-weight: 600; color: white; }
+
+/* REVEAL CARDS */
+.reveal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.reveal-card { background: rgba(255,255,255,0.06); border: 2px solid rgba(255,255,255,0.15); border-radius: 14px; padding: 20px; cursor: pointer; transition: all 0.3s; min-height: 110px; display: flex; flex-direction: column; align-items: flex-start; gap: 10px; position: relative; overflow: hidden; }
+.reveal-card:hover { border-color: #F5B800; background: rgba(245,184,0,0.08); }
+.reveal-card.revealed { border-color: #F5B800; background: rgba(245,184,0,0.12); }
+.reveal-card-icon { font-size: 26px; }
+.reveal-card-title { font-size: 16px; font-weight: 700; color: white; }
+.reveal-card-body { font-size: 13px; color: rgba(255,255,255,0.75); line-height: 1.5; }
+.click-badge { position: absolute; top: 10px; right: 10px; background: rgba(245,184,0,0.2); color: #F5B800; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 99px; }
+
+/* DRAG & DROP */
+.dnd-cards-source { display: flex; flex-direction: column; gap: 8px; }
+.dnd-zone { border: 2px dashed rgba(255,255,255,0.25); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 8px; min-height: 160px; transition: all 0.2s; }
+.dnd-zone.drag-over { border-color: #F5B800; background: rgba(245,184,0,0.07); }
+.dnd-zone.strategy-zone { border-color: rgba(100,180,255,0.4); }
+.dnd-zone.competing-zone { border-color: rgba(255,120,120,0.4); }
+.dnd-zone-header { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 8px; }
+.zone-dot { width: 9px; height: 9px; border-radius: 50%; }
+.dnd-card { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 9px; padding: 10px 14px; font-size: 13px; font-weight: 500; color: white; cursor: grab; user-select: none; transition: all 0.2s; }
+.dnd-card:hover { background: rgba(255,255,255,0.18); transform: scale(1.01); }
+.dnd-card.correct { background: rgba(100,220,100,0.15); border-color: rgba(100,220,100,0.5); }
+.dnd-card.incorrect { background: rgba(255,80,80,0.15); border-color: rgba(255,80,80,0.5); }
+.dnd-source-label { font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.5); text-transform: uppercase; margin-bottom: 4px; }
+.dnd-check-btn { padding: 9px 22px; background: #F5B800; color: #1A0A82; border: none; border-radius: 99px; font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+.dnd-check-btn:hover { background: #FFD54F; }
+
+/* LEVELS */
+.level-item { border: 1px solid rgba(255,255,255,0.15); border-radius: 13px; overflow: hidden; cursor: pointer; transition: border-color 0.2s; }
+.level-item:hover { border-color: rgba(245,184,0,0.5); }
+.level-item.open { border-color: #F5B800; }
+.level-header { display: flex; align-items: center; gap: 14px; padding: 16px 18px; background: rgba(255,255,255,0.06); }
+.level-num { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; flex-shrink: 0; }
+.level-title { font-size: 16px; font-weight: 700; color: white; flex: 1; }
+.level-chevron { color: rgba(255,255,255,0.5); transition: transform 0.3s; font-size: 16px; }
+.level-item.open .level-chevron { transform: rotate(180deg); color: #F5B800; }
+.level-body { max-height: 0; overflow: hidden; transition: max-height 0.35s ease, padding 0.3s; font-size: 13px; color: rgba(255,255,255,0.75); line-height: 1.6; padding: 0 18px; background: rgba(255,255,255,0.03); }
+.level-item.open .level-body { max-height: 200px; padding: 14px 18px; }
+
+/* FLIP CARDS */
+.flip-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; }
+.flip-wrap { perspective: 800px; height: 170px; cursor: pointer; }
+.flip-inner { width: 100%; height: 100%; transform-style: preserve-3d; transition: transform 0.5s cubic-bezier(0.4,0,0.2,1); position: relative; }
+.flip-wrap.flipped .flip-inner { transform: rotateY(180deg); }
+.flip-face { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 18px; }
+.flip-front { background: rgba(255,255,255,0.08); border: 2px solid rgba(255,255,255,0.15); }
+.flip-back { background: linear-gradient(135deg, #1E3FA0, #2C37C4); border: 2px solid #F5B800; transform: rotateY(180deg); }
+.flip-icon { font-size: 28px; }
+.flip-label { font-size: 14px; font-weight: 700; color: white; text-align: center; }
+.flip-answer { font-size: 12px; color: rgba(255,255,255,0.8); text-align: center; line-height: 1.5; }
+.flip-hint { font-size: 10px; color: rgba(255,255,255,0.4); }
+
+/* V-C SLIDER */
+.vc-layout { display: flex; gap: 36px; align-items: flex-start; }
+.vc-formula { background: rgba(255,255,255,0.08); border: 2px solid rgba(245,184,0,0.4); border-radius: 18px; padding: 28px 36px; text-align: center; min-width: 180px; }
+.vc-eq { font-size: 44px; font-weight: 800; color: #F5B800; }
+.vc-sliders { flex: 1; display: flex; flex-direction: column; gap: 20px; }
+.vc-slider-label { font-size: 13px; font-weight: 600; color: white; display: flex; justify-content: space-between; }
+.vc-slider-label span { color: #F5B800; font-weight: 800; }
+input[type=range] { width: 100%; -webkit-appearance: none; height: 7px; border-radius: 99px; background: rgba(255,255,255,0.2); outline: none; }
+input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #F5B800; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+.vc-value-num { font-size: 32px; font-weight: 800; }
+.vc-value-num.positive { color: #4ade80; }
+.vc-value-num.negative { color: #f87171; }
+.vc-bar-wrap { background: rgba(255,255,255,0.06); border-radius: 99px; height: 12px; overflow: hidden; }
+.vc-bar { height: 100%; border-radius: 99px; transition: width 0.3s; }
+
+/* CARDS */
+.cards-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
+.info-card { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12); border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+.info-card-icon { font-size: 28px; }
+.info-card-title { font-size: 15px; font-weight: 700; color: white; }
+.info-card-body { font-size: 12px; color: rgba(255,255,255,0.65); line-height: 1.5; }
+
+/* POSITIONING */
+.pos-grid { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 12px; }
+.pos-card { border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 8px; }
+.pos-card.cost { background: rgba(100,220,180,0.1); border: 2px solid rgba(100,220,180,0.3); }
+.pos-card.diff { background: rgba(180,100,255,0.1); border: 2px solid rgba(180,100,255,0.3); }
+.pos-card.focus { background: rgba(100,180,255,0.1); border: 2px solid rgba(100,180,255,0.3); grid-column: 1/-1; }
+.pos-card.danger { background: rgba(255,80,80,0.08); border: 2px solid rgba(255,80,80,0.25); }
+.pos-card-title { font-size: 15px; font-weight: 700; }
+.pos-card.cost .pos-card-title { color: #4ade80; }
+.pos-card.diff .pos-card-title { color: #c084fc; }
+.pos-card.focus .pos-card-title { color: #7DC4FF; }
+.pos-card-body { font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.5; }
+
+/* DANGER */
+.danger-item { display: flex; align-items: center; gap: 14px; background: rgba(255,80,80,0.08); border: 1px solid rgba(255,80,80,0.2); border-radius: 13px; padding: 16px 20px; }
+.danger-icon { font-size: 26px; }
+.danger-text { font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.9); }
+
+/* PILL LIST */
+.pill-item { display: flex; align-items: center; gap: 12px; background: rgba(255,255,255,0.06); border-radius: 12px; padding: 14px 18px; border-left: 4px solid #F5B800; }
+.pill-icon { font-size: 22px; }
+.pill-title { font-size: 14px; font-weight: 700; color: white; }
+.pill-desc { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 1px; }
+
+/* FIVE FORCES */
+.force-btn { flex: 1; background: rgba(255,255,255,0.07); border: 2px solid rgba(255,255,255,0.15); border-radius: 13px; padding: 14px; cursor: pointer; transition: all 0.25s; text-align: center; display: flex; flex-direction: column; gap: 5px; align-items: center; font-family: inherit; color: white; }
+.force-btn:hover { border-color: rgba(245,184,0,0.5); background: rgba(245,184,0,0.08); }
+.force-btn.active { border-color: #F5B800; background: rgba(245,184,0,0.15); }
+.force-btn-icon { font-size: 22px; }
+.force-btn-title { font-size: 12px; font-weight: 700; }
+.force-detail { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15); border-radius: 14px; padding: 18px; font-size: 13px; color: rgba(255,255,255,0.8); line-height: 1.6; }
+
+/* COMPARE TABLE */
+.compare-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+.compare-table th { padding: 12px 18px; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; }
+.compare-table th:first-child { color: rgba(255,255,255,0.5); }
+.compare-table th:nth-child(2) { background: rgba(100,180,255,0.12); color: #7DC4FF; border-radius: 12px 12px 0 0; }
+.compare-table th:nth-child(3) { background: rgba(245,184,0,0.12); color: #F5B800; border-radius: 12px 12px 0 0; }
+.compare-table td { padding: 10px 18px; font-size: 13px; color: rgba(255,255,255,0.8); border-bottom: 1px solid rgba(255,255,255,0.07); }
+.compare-table td:nth-child(2) { background: rgba(100,180,255,0.05); }
+.compare-table td:nth-child(3) { background: rgba(245,184,0,0.05); }
+.compare-table td:first-child { font-weight: 600; color: rgba(255,255,255,0.5); font-size: 11px; text-transform: uppercase; }
+
+/* SPLIT */
+.split-item { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; color: rgba(255,255,255,0.8); }
+.split-dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
+
+/* CHAIN */
+.chain-item { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 9px; padding: 10px 16px; font-size: 13px; font-weight: 600; color: white; display: flex; align-items: center; gap: 8px; }
+.chain-highlight { border-color: #F5B800; background: rgba(245,184,0,0.12); color: #F5B800; }
+
+/* BENEFIT TILES */
+.benefit-tile { background: rgba(255,255,255,0.06); border: 2px solid rgba(255,255,255,0.12); border-radius: 14px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.25s; display: flex; flex-direction: column; gap: 8px; align-items: center; }
+.benefit-tile:hover { border-color: rgba(245,184,0,0.5); background: rgba(245,184,0,0.08); }
+.benefit-tile.active { border-color: #F5B800; background: rgba(245,184,0,0.15); }
+.benefit-tile-icon { font-size: 32px; }
+.benefit-tile-title { font-size: 14px; font-weight: 700; color: white; }
+.benefit-tile-stat { font-size: 22px; font-weight: 800; color: #F5B800; }
+.benefit-tile-detail { font-size: 12px; color: rgba(255,255,255,0.65); line-height: 1.5; }
+
+/* INDUSTRY STAT */
+.industry-stat { background: rgba(255,255,255,0.06); border-radius: 14px; padding: 14px 18px; display: flex; align-items: center; gap: 14px; border: 1px solid rgba(255,255,255,0.1); }
+
+/* TRADEOFF */
+.tradeoff-box { flex: 1; border-radius: 14px; padding: 20px; text-align: center; display: flex; flex-direction: column; gap: 8px; align-items: center; }
+.tradeoff-box.yes { background: rgba(100,220,180,0.1); border: 2px solid rgba(100,220,180,0.3); }
+.tradeoff-box.no { background: rgba(255,80,80,0.08); border: 2px solid rgba(255,80,80,0.25); }
+.tradeoff-title { font-size: 14px; font-weight: 700; }
+.tradeoff-box.yes .tradeoff-title { color: #4ade80; }
+.tradeoff-box.no .tradeoff-title { color: #f87171; }
+.tradeoff-items { font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.8; }
+
+/* NETWORK */
+.network-card { border-radius: 18px; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+.network-card.hub { background: rgba(255,120,120,0.08); border: 2px solid rgba(255,120,120,0.25); }
+.network-card.point { background: rgba(100,220,180,0.08); border: 2px solid rgba(100,220,180,0.25); }
+.network-card-title { font-size: 17px; font-weight: 800; }
+.network-card.hub .network-card-title { color: #f87171; }
+.network-card.point .network-card-title { color: #4ade80; }
+
+/* COMPLETION */
+.completion-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 20px; text-align: center; }
+.trophy { font-size: 72px; filter: drop-shadow(0 8px 24px rgba(245,184,0,0.5)); animation: bounce 1s ease infinite alternate; }
+@keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-10px); } }
+.cert-badge { background: linear-gradient(135deg,rgba(245,184,0,0.2),rgba(245,184,0,0.05)); border: 2px solid rgba(245,184,0,0.5); border-radius: 18px; padding: 20px 36px; display: flex; align-items: center; gap: 14px; }
+.cert-badge-title { font-size: 15px; font-weight: 800; color: #F5B800; }
+.cert-badge-sub { font-size: 12px; color: rgba(255,255,255,0.6); }
+
+/* ── QUIZ SCREEN ───────────────────────────────────────────────── */
+.quiz-screen {
+  display: flex; flex-direction: column; height: 100%; padding-top: 20px; gap: 0;
+}
+.quiz-header-band {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 18px;
+}
+.quiz-badge {
+  background: linear-gradient(135deg, #F5B800, #E8A000);
+  color: #1A0A82; font-size: 10px; font-weight: 800;
+  padding: 5px 14px; border-radius: 99px; text-transform: uppercase; letter-spacing: 0.1em;
+}
+.quiz-title { font-size: clamp(20px,2.5vw,30px); font-weight: 800; color: white; }
+.quiz-subtitle { font-size: 13px; color: rgba(255,255,255,0.55); }
+
+.quiz-body { flex: 1; display: flex; flex-direction: column; gap: 20px; overflow-y: auto; }
+
+.quiz-question-block {
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 18px; padding: 22px; display: flex; flex-direction: column; gap: 14px;
+}
+.quiz-q-num { font-size: 10px; font-weight: 700; color: #F5B800; text-transform: uppercase; letter-spacing: 0.1em; }
+.quiz-q-text { font-size: 16px; font-weight: 700; color: white; line-height: 1.4; }
+.quiz-options { display: flex; flex-direction: column; gap: 8px; }
+.quiz-option {
+  display: flex; align-items: center; gap: 12px;
+  background: rgba(255,255,255,0.07); border: 2px solid rgba(255,255,255,0.15);
+  border-radius: 12px; padding: 13px 16px; cursor: pointer; transition: all 0.2s;
+  font-size: 14px; font-weight: 500; color: white; text-align: left;
+}
+.quiz-option:hover:not(.selected):not(.revealed) { background: rgba(245,184,0,0.1); border-color: rgba(245,184,0,0.4); }
+.quiz-option.selected { border-color: #F5B800; background: rgba(245,184,0,0.15); }
+.quiz-option.correct { border-color: #4ade80; background: rgba(100,220,100,0.15); }
+.quiz-option.wrong { border-color: #f87171; background: rgba(255,80,80,0.15); }
+.quiz-option-letter {
+  width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+  background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 800; color: rgba(255,255,255,0.7);
+}
+.quiz-option.selected .quiz-option-letter { background: #F5B800; color: #1A0A82; }
+.quiz-option.correct .quiz-option-letter { background: #4ade80; color: #1A0A82; }
+.quiz-option.wrong .quiz-option-letter { background: #f87171; color: white; }
+.quiz-feedback { font-size: 13px; line-height: 1.5; padding: 12px 16px; border-radius: 10px; }
+.quiz-feedback.ok { background: rgba(100,220,100,0.12); color: #86efac; border: 1px solid rgba(100,220,100,0.3); }
+.quiz-feedback.bad { background: rgba(255,80,80,0.1); color: #fca5a5; border: 1px solid rgba(255,80,80,0.3); }
+
+.quiz-submit-btn {
+  align-self: flex-start; padding: 11px 28px; background: #F5B800; color: #1A0A82;
+  border: none; border-radius: 99px; font-family: inherit; font-size: 14px; font-weight: 800;
+  cursor: pointer; transition: all 0.2s; margin-top: 4px;
+}
+.quiz-submit-btn:hover { background: #FFD54F; }
+.quiz-submit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.quiz-score-banner {
+  background: linear-gradient(135deg, rgba(245,184,0,0.2), rgba(245,184,0,0.05));
+  border: 2px solid rgba(245,184,0,0.4); border-radius: 16px;
+  padding: 18px 24px; display: flex; align-items: center; gap: 16px;
+}
+.quiz-score-num { font-size: 36px; font-weight: 800; color: #F5B800; }
+.quiz-score-label { font-size: 13px; color: rgba(255,255,255,0.65); }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 2px; }
+</style>
+
+<template id="__bundler_thumbnail" data-bg-color="#1A0A82">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#1A0A82"/>
+    <polygon points="1200,0 1200,800 400,800" fill="#2C37C4" opacity="0.6"/>
+    <rect x="80" y="160" width="420" height="12" rx="6" fill="#F5B800"/>
+    <rect x="80" y="200" width="600" height="52" rx="10" fill="white" opacity="0.15"/>
+    <rect x="80" y="268" width="600" height="52" rx="10" fill="white" opacity="0.1"/>
+    <rect x="80" y="336" width="600" height="52" rx="10" fill="white" opacity="0.07"/>
+    <rect x="80" y="430" width="180" height="48" rx="24" fill="#F5B800"/>
+    <text x="170" y="462" font-family="sans-serif" font-size="22" font-weight="800" fill="#1A0A82" text-anchor="middle">▶ Start</text>
+    <text x="80" y="140" font-family="sans-serif" font-size="48" font-weight="900" fill="white">Business Strategy</text>
+  </svg>
+</template>
+</head>
+<body>
+<div id="root"></div>
+
+<script>
+window.__pendingSlide = null;
+window.__setSlideIdx = null;
+window.__goToSlide = function(n) {
+  if (window.__setSlideIdx) { window.__setSlideIdx(n); }
+  else { window.__pendingSlide = n; }
+};
+</script>
+<script type="text/babel">
+const { useState, useEffect, useRef, useCallback } = React;
+
+/* ════════════════════════════════════════════
+   TTS HOOK
+═══════════════════════════════════════════════ */
+function useTTS() {
+  const [muted, setMuted] = useState(false);
+  const [speaking, setSpeaking] = useState(false);
+  const utterRef = useRef(null);
+
+  const speak = useCallback((text) => {
+    if (!window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    setSpeaking(false);
+    if (muted) return;
+    const utt = new SpeechSynthesisUtterance(text);
+    utt.rate = 0.95; utt.pitch = 1.0; utt.volume = 1.0;
+    utt.onstart = () => setSpeaking(true);
+    utt.onend = () => setSpeaking(false);
+    utt.onerror = () => setSpeaking(false);
+    utterRef.current = utt;
+    // small delay lets React settle
+    setTimeout(() => window.speechSynthesis.speak(utt), 200);
+  }, [muted]);
+
+  const stop = useCallback(() => {
+    window.speechSynthesis && window.speechSynthesis.cancel();
+    setSpeaking(false);
+  }, []);
+
+  const toggle = useCallback(() => {
+    if (speaking) { stop(); }
+    else if (utterRef.current && !muted) { window.speechSynthesis.speak(utterRef.current); setSpeaking(true); }
+  }, [speaking, muted, stop]);
+
+  const toggleMute = useCallback(() => {
+    setMuted(m => { if (!m) { stop(); } return !m; });
+  }, [stop]);
+
+  return { speak, stop, speaking, muted, toggle, toggleMute };
+}
+
+/* ════════════════════════════════════════════
+   GEO BG
+═══════════════════════════════════════════════ */
+function GeoBg() {
+  return (
+    <div className="geo-bg">
+      <svg width="500" height="500" style={{top:'-80px',right:'-80px',opacity:0.1}}>
+        <polygon points="500,0 500,500 0,500" fill="#4D6AFF"/>
+      </svg>
+      <svg width="360" height="360" style={{bottom:'-50px',left:'-50px',opacity:0.07}}>
+        <circle cx="180" cy="180" r="180" fill="#6B82FF"/>
+      </svg>
+      <svg width="280" height="280" style={{top:'38%',left:'28%',opacity:0.04}}>
+        <polygon points="140,0 280,280 0,280" fill="#F5B800"/>
+      </svg>
+    </div>
+  );
+}
+
+/* ════════════════════════════════════════════
+   CONTENT SCREENS
+═══════════════════════════════════════════════ */
+function Screen1({ onNext }) {
+  return (
+    <div className="screen">
+      <div className="intro-layout">
+        <div style={{flex:1}}>
+          <div className="screen-tag">Welcome</div>
+          <div className="intro-big-text">Business<br/><span className="highlight">Strategy</span><br/>Course</div>
+          <p style={{fontSize:'15px',color:'rgba(255,255,255,0.7)',maxWidth:'460px',lineHeight:1.6}}>
+            Learn how organizations build competitive advantage using structured strategic frameworks — starting from first principles.
+          </p>
+          <button className="start-btn" onClick={onNext}>
+            <svg viewBox="0 0 20 20" fill="currentColor" width="18" height="18"><polygon points="4,2 18,10 4,18"/></svg>
+            Start Course
+          </button>
+        </div>
+        <div style={{flex:'0 0 280px',display:'flex',flexDirection:'column',alignItems:'center',gap:'14px'}}>
+          <div style={{width:'200px',height:'200px',borderRadius:'50%',background:'rgba(255,255,255,0.06)',border:'2px solid rgba(255,255,255,0.12)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'88px'}}>📊</div>
+          <div style={{display:'flex',gap:'10px',width:'100%'}}>
+            <div className="stat-box"><div className="stat-num">20</div><div className="stat-desc">Screens</div></div>
+            <div className="stat-box"><div className="stat-num">5</div><div className="stat-desc">Activities</div></div>
+            <div className="stat-box"><div className="stat-num">4</div><div className="stat-desc">Quizzes</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Screen2() {
+  return (
+    <div className="screen">
+      <div className="screen-tag">Learning Objectives</div>
+      <div className="screen-heading">What You'll Learn</div>
+      <div className="screen-sub">By the end of this course, you'll be able to think and act strategically.</div>
+      <div className="obj-list">
+        {[
+          {num:'01',text:'Understand strategy fundamentals — what makes strategy different from mere competition'},
+          {num:'02',text:'Learn strategic positioning — cost leadership, differentiation, and focus strategies'},
+          {num:'03',text:'Analyze a real-world case: Southwest Airlines and their 40+ years of profitability'},
+        ].map((o,i)=>(
+          <div key={i} className="obj-item">
+            <div className="obj-num">{o.num}</div>
+            <div className="obj-text">{o.text}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Screen3() {
+  const [revealed, setRevealed] = useState([]);
+  const cards = [
+    {icon:'🎯',title:'Strategy = Being Unique',body:'Strategy is about creating a unique and valuable position — not about being the best at everything.'},
+    {icon:'🏆',title:'Not About Being the Best',body:'Competing to be best leads to imitation and commoditization. Uniqueness is defensible.'},
+    {icon:'⚖️',title:'Requires Trade-offs',body:'Strategy requires deliberate choices about what NOT to do. Trade-offs are what make strategy sustainable.'},
+    {icon:'🔗',title:'Activities Must Fit',body:'All activities in a strategy must align and reinforce one another — this is strategic fit.'},
+  ];
+  const toggle = (i) => setRevealed(p=>p.includes(i)?p.filter(x=>x!==i):[...p,i]);
+  return (
+    <div className="screen">
+      <div className="screen-tag">Screen 3 of 20</div>
+      <div className="screen-heading">What is Strategy?</div>
+      <div className="screen-sub" style={{marginBottom:14}}>Click each card to reveal the concept.</div>
+      <div className="reveal-grid" style={{flex:1}}>
+        {cards.map((c,i)=>(
+          <div key={i} className={`reveal-card ${revealed.includes(i)?'revealed':''}`} onClick={()=>toggle(i)}>
+            <div className="reveal-card-icon">{c.icon}</div>
+            <div className="reveal-card-title">{c.title}</div>
+            {revealed.includes(i)?<div className="reveal-card-body">{c.body}</div>:<div className="click-badge">Click to reveal</div>}
+          </div>
+        ))}
+      </div>
+      <div style={{marginTop:10,fontSize:11,color:'rgba(255,255,255,0.35)'}}>{revealed.length} of {cards.length} concepts revealed</div>
+    </div>
+  );
+}
+
+const DND_ITEMS = [
+  {id:'a',text:'Creating unique value for customers',correct:'strategy'},
+  {id:'b',text:'Outperforming rivals on the same dimensions',correct:'competing'},
+  {id:'c',text:'Long-term sustainable advantage',correct:'strategy'},
+  {id:'d',text:'Short-term market share gains',correct:'competing'},
+  {id:'e',text:'Making deliberate trade-offs',correct:'strategy'},
+  {id:'f',text:'Benchmarking against industry leaders',correct:'competing'},
+];
+
+function Screen4() {
+  const [zones, setZones] = useState({strategy:[],competing:[],source:DND_ITEMS.map(d=>d.id)});
+  const [dragging, setDragging] = useState(null);
+  const [dragOver, setDragOver] = useState(null);
+  const [checked, setChecked] = useState(false);
+  const drop = (zone) => {
+    if (!dragging) return;
+    const from = Object.keys(zones).find(z=>zones[z].includes(dragging));
+    setZones(p=>{const n={...p};n[from]=p[from].filter(x=>x!==dragging);n[zone]=[...p[zone],dragging];return n;});
+    setDragging(null);setDragOver(null);setChecked(false);
+  };
+  const correctCount = [...zones.strategy,...zones.competing].filter(id=>{
+    const item=DND_ITEMS.find(d=>d.id===id);
+    return item.correct===(zones.strategy.includes(id)?'strategy':'competing');
+  }).length;
+  const renderCard = (id) => {
+    const item=DND_ITEMS.find(d=>d.id===id);
+    const zone=zones.strategy.includes(id)?'strategy':zones.competing.includes(id)?'competing':null;
+    let cls='dnd-card';
+    if(checked&&zone) cls+=item.correct===zone?' correct':' incorrect';
+    return <div key={id} className={cls} draggable onDragStart={()=>setDragging(id)}>{item.text}</div>;
+  };
+  const makeZone = (zone,color,label) => (
+    <div className={`dnd-zone ${zone}-zone ${dragOver===zone?'drag-over':''}`}
+      onDragOver={e=>{e.preventDefault();setDragOver(zone);}}
+      onDragLeave={()=>setDragOver(null)} onDrop={()=>drop(zone)}>
+      <div className="dnd-zone-header"><div className="zone-dot" style={{background:color}}></div><span style={{color:'white',fontSize:13}}>{label}</span></div>
+      {zones[zone].map(id=>renderCard(id))}
+    </div>
+  );
+  return (
+    <div className="screen">
+      <div className="screen-tag">Activity — Drag & Drop</div>
+      <div className="screen-heading">Strategy vs. Competing</div>
+      <div className="screen-sub" style={{marginBottom:10}}>Drag each statement to the correct category.</div>
+      <div style={{flex:1,display:'flex',flexDirection:'column',gap:14,minHeight:0}}>
+        <div style={{display:'flex',gap:14,flex:1,minHeight:0}}>
+          <div style={{flex:1,display:'flex',flexDirection:'column',gap:6,minWidth:0}}>
+            <div className="dnd-source-label">Statements</div>
+            <div className="dnd-cards-source">{zones.source.map(id=>renderCard(id))}</div>
+          </div>
+          <div style={{flex:2,display:'grid',gridTemplateColumns:'1fr 1fr',gap:14,minWidth:0}}>
+            {makeZone('strategy','#7DC4FF','Strategy → Unique')}
+            {makeZone('competing','#f87171','Competing → Best')}
+          </div>
+        </div>
+        <div style={{display:'flex',alignItems:'center',gap:12}}>
+          <button className="dnd-check-btn" onClick={()=>setChecked(true)}>Check</button>
+          <button className="dnd-check-btn" style={{background:'rgba(255,255,255,0.15)',color:'white'}} onClick={()=>{setZones({strategy:[],competing:[],source:DND_ITEMS.map(d=>d.id)});setChecked(false);}}>Reset</button>
+          {checked&&<div style={{fontSize:14,fontWeight:600,color:correctCount===6?'#4ade80':'#F5B800'}}>{correctCount}/6 correct {correctCount===6?'🎉':''}</div>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Screen5() {
+  const [open,setOpen]=useState(null);
+  const levels=[
+    {num:'01',color:'#F5B800',title:'Corporate Strategy',desc:'Defines the overall scope and direction of the organization. Answers: What businesses should we be in? Includes decisions on diversification, mergers, and acquisitions.'},
+    {num:'02',color:'#7DC4FF',title:'Business Strategy',desc:'Defines how a specific business unit will compete within its market. Answers: How do we win against competitors? Involves decisions on positioning and differentiation.'},
+    {num:'03',color:'#c084fc',title:'Functional Strategy',desc:'Supports business strategy through functional areas — marketing, operations, HR, finance. Answers: How do we execute? Translates strategy into day-to-day actions.'},
+  ];
+  return (
+    <div className="screen">
+      <div className="screen-tag">Screen 5 of 20</div>
+      <div className="screen-heading">Levels of Strategy</div>
+      <div className="screen-sub" style={{marginBottom:14}}>Click each level to expand.</div>
+      <div style={{flex:1,display:'flex',flexDirection:'column',gap:10}}>
+        {levels.map((l,i)=>(
+          <div key={i} className={`level-item ${open===i?'open':''}`} onClick={()=>setOpen(open===i?null:i)}>
+            <div className="level-header">
+              <div className="level-num" style={{background:l.color+'22',color:l.color,border:`2px solid ${l.color}44`}}>{l.num}</div>
+              <div className="level-title">{l.title}</div>
+              <div className="level-chevron">▼</div>
+            </div>
+            <div className="level-body">{l.desc}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Screen6() {
+  const [flipped,setFlipped]=useState([]);
+  const cards=[
+    {icon:'🌍',front:'Where to compete?',back:'Define your market scope — which industries, geographies, and customer segments to target.'},
+    {icon:'⚔️',front:'How to win?',back:'Choose a competitive position — cost leadership, differentiation, or focus strategy.'},
+    {icon:'⚙️',front:'How to support strategy?',back:'Align all functional activities — operations, marketing, HR — to execute the chosen strategy.'},
+  ];
+  const toggle=(i)=>setFlipped(p=>p.includes(i)?p.filter(x=>x!==i):[...p,i]);
+  return (
+    <div className="screen">
+      <div className="screen-tag">Activity — Flip Cards</div>
+      <div className="screen-heading">Key Strategic Questions</div>
+      <div className="screen-sub" style={{marginBottom:14}}>Click each card to flip it.</div>
+      <div className="flip-grid" style={{flex:1,alignContent:'start'}}>
+        {cards.map((c,i)=>(
+          <div key={i} className={`flip-wrap ${flipped.includes(i)?'flipped':''}`} onClick={()=>toggle(i)}>
+            <div className="flip-inner">
+              <div className="flip-face flip-front">
+                <div className="flip-icon">{c.icon}</div>
+                <div className="flip-label">{c.front}</div>
+                <div className="flip-hint">Click to flip</div>
+              </div>
+              <div className="flip-face flip-back">
+                <div className="flip-icon">💡</div>
+                <div className="flip-answer">{c.back}</div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Screen7() {
+  return (
+    <div className="screen">
+      <div className="screen-tag">Screen 7 of 20</div>
+      <div className="screen-heading">Business-Level Strategy</div>
+      <div className="screen-sub" style={{marginBottom:14}}>Three fundamental questions every business strategy must answer.</div>
+      <div className="cards-row" style={{flex:1,alignContent:'start'}}>
+        {[
+          {icon:'👥',title:'Who to serve',body:'Define the target customer segment — age, geography, income, needs, behaviors.'},
+          {icon:'💬',title:'What needs to meet',body:'Identify the core problem or desire your offering addresses for that customer.'},
+          {icon:'🚀',title:'How to deliver value',body:'Determine the activities and capabilities required to fulfill that need better than anyone else.'},
+        ].map((it,i)=>(
+          <div key={i} className="info-card">
+            <div className="info-card-icon">{it.icon}</div>
+            <div className="info-card-title">{it.title}</div>
+            <div className="info-card-body">{it.body}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Screen8() {
+  const [V,setV]=useState(70);
+  const [C,setC]=useState(40);
+  const val=V-C;
+  return (
+    <div className="screen">
+      <div className="screen-tag">Interactive — Value Slider</div>
+      <div className="screen-heading">Economic Value Creation</div>
+      <div className="screen-sub" style={{marginBottom:16}}>Adjust willingness to pay (V) and cost (C) to see when value is created.</div>
+      <div className="vc-layout" style={{flex:1,alignItems:'center'}}>
+        <div className="vc-formula">
+          <div className="vc-eq">V – C</div>
+          <div style={{fontSize:12,color:'rgba(255,255,255,0.5)',marginTop:6}}>Economic Value</div>
+          <div style={{marginTop:16}}>
+            <div className={`vc-value-num ${val>0?'positive':'negative'}`}>{val>0?'+':''}{val}</div>
+            <div style={{fontSize:11,color:'rgba(255,255,255,0.5)',marginTop:4}}>{val>0?'Value created ✓':val===0?'Break-even':'Value destroyed ✗'}</div>
+          </div>
+        </div>
+        <div className="vc-sliders">
+          <div style={{display:'flex',flexDirection:'column',gap:8}}>
+            <div className="vc-slider-label">Willingness to Pay (V) <span>{V}</span></div>
+            <input type="range" min="0" max="100" value={V} onChange={e=>setV(+e.target.value)} style={{accentColor:'#7DC4FF'}}/>
+            <div style={{fontSize:11,color:'rgba(255,255,255,0.5)'}}>How much a customer will pay</div>
+          </div>
+          <div style={{height:'1px',background:'rgba(255,255,255,0.1)'}}/>
+          <div style={{display:'flex',flexDirection:'column',gap:8}}>
+            <div className="vc-slider-label">Cost of Production (C) <span>{C}</span></div>
+            <input type="range" min="0" max="100" value={C} onChange={e=>setC(+e.target.value)} style={{accentColor:'#f87171'}}/>
+            <div style={{fontSize:11,color:'rgba(255,255,255,0.5)'}}>Total cost to produce</div>
+          </div>
+          <div style={{display:'flex',gap:10}}>
+            <div style={{flex:1}}>
+              <div style={{fontSize:11,color:'rgba(255,255,255,0.4)',marginBottom:4}}>V = {V}</div>
+              <div className="vc-bar-wrap"><div className="vc-bar" style={{width:`${V}%`,background:'#7DC4FF'}}/></div>
+            </div>
+            <div style={{flex:1}}>
+              <div style={{fontSize:11,color:'rgba(255,255,255,0.4)',marginBottom:4}}>C = {C}</div>
+              <div className="vc-bar-wrap"><div className="vc-bar" style={{width:`${C}%`,background:'#f87171'}}/></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Screen9() {
+  return (
+    <div className="screen">
+      <div className="screen-tag">Screen 9 of 20</div>
+      <div className="screen-heading">Competitive Positioning</div>
+      <div className="screen-sub" style={{marginBottom:14}}>Firms must choose a clear, sustainable position.</div>
+      <div className="pos-grid" style={{flex:1}}>
+        <div className="pos-card cost"><div className="pos-card-title">💰 Cost Leadership</div><div className="pos-card-body">Deliver acceptable value at the lowest possible cost. Advantage comes from operational efficiency and scale. <em>Example: Walmart, Ryanair.</em></div></div>
+        <div className="pos-card diff"><div className="pos-card-title">✨ Differentiation</div><div className="pos-card-body">Deliver unique value that customers pay a premium for. Advantage comes from uniqueness and brand. <em>Example: Apple, Louis Vuitton.</em></div></div>
+        <div className="pos-card focus" style={{gridColumn:'1/-1'}}><div className="pos-card-title">🎯 Focus Strategy</div><div className="pos-card-body">Serve a narrow segment extremely well — either through cost focus or differentiation focus. Sacrifice breadth for depth. <em>Example: Rolls-Royce.</em></div></div>
+      </div>
+    </div>
+  );
+}
+
+function Screen10() {
+  return (
+    <div className="screen">
+      <div className="screen-tag">Screen 10 of 20</div>
+      <div className="screen-heading">The Danger of Straddling</div>
+      <div className="screen-sub" style={{marginBottom:14}}>Failing to commit to a clear strategy leads to poor performance.</div>
+      <div style={{flex:1,display:'flex',flexDirection:'column',gap:12}}>
+        {[
+          {icon:'😵',text:"Confused positioning — customers don't understand your value proposition"},
+          {icon:'💸',text:'High costs — you pay for capabilities you don\'t fully leverage'},
+          {icon:'📉',text:'Weak competitive advantage — neither cheapest nor most unique'},
+        ].map((d,i)=>(
+          <div key={i} className="danger-item"><div className="danger-icon">{d.icon}</div><div className="danger-text">{d.text}</div></div>
+        ))}
+        <div style={{marginTop:4,background:'rgba(255,80,80,0.08)',border:'1px solid rgba(255,80,80,0.2)',borderRadius:13,padding:'14px 18px'}}>
+          <div style={{fontSize:14,fontWeight:700,color:'#f87171',marginBottom:4}}>⚠️ "Stuck in the Middle"</div>
+          <div style={{fontSize:13,color:'rgba(255,255,255,0.7)',lineHeight:1.6}}>A firm trying to be all things to all customers ends up being nothing to anyone. Porter calls this being "stuck in the middle" — a position with no sustainable competitive advantage.</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Screen11() {
+  return (
+    <div className="screen">
+      <div className="screen-tag">Screen 11 of 20</div>
+      <div className="screen-heading">Cost Leadership Drivers</div>
+      <div className="screen-sub" style={{marginBottom:14}}>Cost advantage is built on three core drivers.</div>
+      <div style={{flex:1,display:'flex',flexDirection:'column',gap:12}}>
+        {[
+          {icon:'📦',title:'Economies of Scale',desc:'As volume increases, fixed costs spread over more units — lowering per-unit cost significantly.'},
+          {icon:'📈',title:'Learning Curve Effect',desc:'As workers gain experience, efficiency improves. Cumulative output reduces unit cost.'},
+          {icon:'🛒',title:'Input Cost Advantage',desc:'Access to cheaper raw materials, labor, or technology provides a structural cost advantage.'},
+        ].map((p,i)=>(
+          <div key={i} className="pill-item"><div className="pill-icon">{p.icon}</div><div><div className="pill-title">{p.title}</div><div className="pill-desc">{p.desc}</div></div></div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Screen12() {
+  const [active,setActive]=useState(null);
+  const forces=[
+    {id:0,icon:'🚪',title:'New Entrants',detail:'Threat from new companies entering the industry. High when barriers to entry (capital, regulation, brand) are low.'},
+    {id:1,icon:'🛍️',title:'Buyer Power',detail:'Powerful buyers demand lower prices or higher quality. High when buyers are concentrated or face low switching costs.'},
+    {id:2,icon:'🏭',title:'Supplier Power',detail:'Powerful suppliers raise prices or reduce quality. High when suppliers are concentrated or offer differentiated inputs.'},
+    {id:3,icon:'⚔️',title:'Rivalry',detail:'Intensity of competition among existing firms. High rivalry erodes profitability through price wars and product launches.'},
+    {id:4,icon:'🔄',title:'Substitutes',detail:'Products from other industries meeting the same need. Limits pricing power. Strong substitutes cap industry profits.'},
+  ];
+  return (
+    <div className="screen">
+      <div className="screen-tag">Screen 12 of 20</div>
+      <div className="screen-heading">Porter's Five Forces</div>
+      <div className="screen-sub" style={{marginBottom:10}}>Click each force to learn how it shapes industry profitability.</div>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(5,1fr)',gap:8,marginBottom:12}}>
+        {forces.map(f=>(
+          <button key={f.id} className={`force-btn ${active===f.id?'active':''}`} onClick={()=>setActive(active===f.id?null:f.id)}>
+            <div className="force-btn-icon">{f.icon}</div>
+            <div className="force-btn-title">{f.title}</div>
+          </button>
+        ))}
+      </div>
+      <div className="force-detail" style={{flex:1}}>
+        {active!==null?(
+          <div>
+            <div style={{fontSize:14,fontWeight:700,color:'#F5B800',marginBottom:6}}>{forces[active].icon} {forces[active].title}</div>
+            <div style={{fontSize:13,color:'rgba(255,255,255,0.8)',lineHeight:1.6}}>{forces[active].detail}</div>
+          </div>
+        ):<div style={{color:'rgba(255,255,255,0.3)',fontStyle:'italic',fontSize:13}}>Select a force above to learn more…</div>}
+      </div>
+      <div style={{marginTop:10,background:'rgba(255,255,255,0.04)',borderRadius:11,padding:'10px 14px',fontSize:12,color:'rgba(255,255,255,0.5)'}}>
+        💡 The stronger the five forces, the lower the industry's profit potential.
+      </div>
+    </div>
+  );
+}
+
+function Screen13() {
+  return (
+    <div className="screen">
+      <div className="screen-tag">Case Study</div>
+      <div className="screen-heading">Southwest Airlines ✈️</div>
+      <div className="screen-sub" style={{marginBottom:16}}>A unique success story in one of the world's toughest industries.</div>
+      <div style={{display:'flex',gap:20,flex:1,alignItems:'center'}}>
+        <div style={{flex:1,display:'flex',flexDirection:'column',gap:12}}>
+          <div style={{background:'rgba(255,255,255,0.07)',borderRadius:14,padding:'16px 20px',border:'1px solid rgba(255,255,255,0.12)'}}>
+            <div style={{fontSize:11,color:'rgba(255,255,255,0.5)',marginBottom:4,textTransform:'uppercase',letterSpacing:'0.08em',fontWeight:700}}>Founded</div>
+            <div style={{fontSize:20,fontWeight:800,color:'white'}}>1967 — Dallas, Texas</div>
+          </div>
+          <div style={{background:'rgba(245,184,0,0.1)',borderRadius:14,padding:'16px 20px',border:'1px solid rgba(245,184,0,0.3)'}}>
+            <div style={{fontSize:11,color:'#F5B800',marginBottom:4,textTransform:'uppercase',letterSpacing:'0.08em',fontWeight:700}}>Achievement</div>
+            <div style={{fontSize:16,fontWeight:700,color:'white'}}>47 consecutive years of profitability</div>
+          </div>
+          <div style={{background:'rgba(100,220,180,0.07)',borderRadius:14,padding:'16px 20px',border:'1px solid rgba(100,220,180,0.2)'}}>
+            <div style={{fontSize:13,color:'rgba(255,255,255,0.7)',lineHeight:1.6}}>In an industry where most airlines lose money, Southwest has maintained consistent profits through a <strong style={{color:'white'}}>relentlessly focused low-cost strategy</strong>.</div>
+          </div>
+        </div>
+        <div style={{flex:'0 0 160px',textAlign:'center'}}>
+          <div style={{fontSize:72,marginBottom:10}}>✈️</div>
+          <div style={{fontSize:13,color:'rgba(255,255,255,0.55)',lineHeight:1.5}}>The most studied airline strategy in the world</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Screen14() {
+  const rows=[
+    ['Focus','Low Cost / Efficiency','Premium Service / Differentiation'],
+    ['Fares','Budget-friendly','Multiple price tiers'],
+    ['Routes','Point-to-point, short haul','Hub-and-spoke, global'],
+    ['Baggage','No free checked bags (most)','Included (usually)'],
+    ['Seats','Open seating','Multiple cabin classes'],
+    ['Revenue','Ancillary fees','Loyalty / corporate programs'],
+  ];
+  return (
+    <div className="screen">
+      <div className="screen-tag">Screen 14 of 20</div>
+      <div className="screen-heading">LCC vs. Full-Service Carriers</div>
+      <div className="screen-sub" style={{marginBottom:10}}>Two fundamentally different strategic positions.</div>
+      <div style={{flex:1,overflowY:'auto'}}>
+        <table className="compare-table">
+          <thead>
+            <tr><th></th><th>Low-Cost Carrier (LCC)</th><th>Full-Service Carrier (FSC)</th></tr>
+          </thead>
+          <tbody>
+            {rows.map((r,i)=><tr key={i}>{r.map((c,j)=><td key={j}>{c}</td>)}</tr>)}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+function Screen15() {
+  return (
+    <div className="screen">
+      <div className="screen-tag">Screen 15 of 20</div>
+      <div className="screen-heading">Network Models</div>
+      <div className="screen-sub" style={{marginBottom:14}}>How airlines route flights shapes cost and efficiency fundamentally.</div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,flex:1}}>
+        <div className="network-card hub">
+          <div className="network-card-title">🔵 Hub-and-Spoke</div>
+          {['All flights routed through central hubs','Delays cascade across the network','Higher asset utilization but complex','Works well for long-haul international routes'].map((t,i)=>(
+            <div key={i} className="split-item"><div className="split-dot" style={{background:'#f87171'}}></div>{t}</div>
+          ))}
+        </div>
+        <div className="network-card point">
+          <div className="network-card-title">🟢 Point-to-Point</div>
+          {['Direct flights between any two cities','Delays don\'t cascade','Simpler, faster turnarounds','Lower cost per flight — Southwest\'s model'].map((t,i)=>(
+            <div key={i} className="split-item"><div className="split-dot" style={{background:'#4ade80'}}></div>{t}</div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Screen16() {
+  return (
+    <div className="screen">
+      <div className="screen-tag">Screen 16 of 20</div>
+      <div className="screen-heading">Airline Industry Profitability</div>
+      <div className="screen-sub" style={{marginBottom:12}}>The airline industry is structurally challenging — yet Southwest thrives.</div>
+      <div style={{flex:1,display:'flex',flexDirection:'column',gap:10}}>
+        {[
+          {label:'New Entrant Threat',val:60,color:'#f87171',note:'Low barriers via leasing'},
+          {label:'Buyer Power',val:75,color:'#fb923c',note:'Price-sensitive passengers'},
+          {label:'Supplier Power',val:70,color:'#f87171',note:'Boeing/Airbus duopoly, fuel'},
+          {label:'Rivalry Intensity',val:85,color:'#ef4444',note:'Intense — online price comparison'},
+          {label:'Substitutes',val:45,color:'#fbbf24',note:'Train, car, video call'},
+        ].map((f,i)=>(
+          <div key={i} className="industry-stat">
+            <div style={{flex:'0 0 160px',fontSize:13,fontWeight:600,color:'white'}}>{f.label}</div>
+            <div style={{flex:1}}>
+              <div className="vc-bar-wrap"><div className="vc-bar" style={{width:`${f.val}%`,background:`linear-gradient(90deg,${f.color}88,${f.color})`}}/></div>
+            </div>
+            <div style={{flex:'0 0 32px',textAlign:'right',fontSize:13,fontWeight:700,color:f.color}}>{f.val}%</div>
+            <div style={{flex:'0 0 180px',fontSize:11,color:'rgba(255,255,255,0.45)'}}>{f.note}</div>
+          </div>
+        ))}
+        <div style={{background:'rgba(245,184,0,0.1)',border:'1px solid rgba(245,184,0,0.3)',borderRadius:12,padding:'12px 18px',fontSize:13,color:'rgba(255,255,255,0.8)'}}>
+          💡 <strong style={{color:'#F5B800'}}>Southwest's answer:</strong> Compete where forces are weakest — short-haul domestic routes.
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Screen17() {
+  return (
+    <div className="screen">
+      <div className="screen-tag">Screen 17 of 20</div>
+      <div className="screen-heading">Southwest's Value Chain</div>
+      <div className="screen-sub" style={{marginBottom:14}}>Every activity aligns to one goal: low cost.</div>
+      <div style={{flex:1,display:'flex',flexDirection:'column',gap:14}}>
+        <div style={{display:'flex',gap:8,flexWrap:'wrap',alignItems:'center'}}>
+          {['No frills service','Single aircraft (737)','No seat assignments','No meals','Direct routes only'].map((c,i)=>(
+            <React.Fragment key={i}><div className={`chain-item ${i===1||i===4?'chain-highlight':''}`}>{c}</div>{i<4&&<span style={{color:'rgba(255,255,255,0.25)',fontSize:16}}>›</span>}</React.Fragment>
+          ))}
+        </div>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,flex:1}}>
+          {[
+            {icon:'✈️',title:'Single Aircraft Fleet',body:'All Southwest planes are Boeing 737s — slashing maintenance costs and simplifying crew training.'},
+            {icon:'🎫',title:'No Assigned Seating',body:'Open boarding eliminates seat management systems. Faster boarding, lower overhead.'},
+            {icon:'🛣️',title:'No Hub Routing',body:'Direct city-to-city routes eliminate hub congestion and cascading delays.'},
+            {icon:'🤝',title:'No Interline Agreements',body:"Southwest doesn't transfer bags to other airlines, avoiding complex coordination costs."},
+          ].map((c,i)=>(
+            <div key={i} className="info-card" style={{padding:'14px 18px'}}>
+              <div style={{fontSize:22}}>{c.icon}</div>
+              <div className="info-card-title" style={{fontSize:14}}>{c.title}</div>
+              <div className="info-card-body">{c.body}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Screen18() {
+  const [active,setActive]=useState(null);
+  const tiles=[
+    {icon:'⏱️',title:'15-Minute Turnaround',stat:'15 min',detail:"Industry average is 45–60 minutes. Southwest's gate teams work like a pit crew — coordinated, efficient, fast."},
+    {icon:'💰',title:'Annual Savings',stat:'$528M',detail:'Faster turnaround means more flights per plane per day, generating $528M in additional annual revenue.'},
+    {icon:'🛫',title:'More Daily Flights',stat:'+40%',detail:'Each aircraft flies more routes per day — 40% more utilization from the same physical assets.'},
+  ];
+  return (
+    <div className="screen">
+      <div className="screen-tag">Activity — Click to Explore</div>
+      <div className="screen-heading">The Turnaround Advantage</div>
+      <div className="screen-sub" style={{marginBottom:14}}>Click each benefit to see why it matters.</div>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:14,flex:1,alignContent:'start'}}>
+        {tiles.map((t,i)=>(
+          <div key={i} className={`benefit-tile ${active===i?'active':''}`} onClick={()=>setActive(active===i?null:i)}>
+            <div className="benefit-tile-icon">{t.icon}</div>
+            <div className="benefit-tile-title">{t.title}</div>
+            <div className="benefit-tile-stat">{t.stat}</div>
+            {active===i&&<div className="benefit-tile-detail">{t.detail}</div>}
+          </div>
+        ))}
+      </div>
+      <div style={{marginTop:14,background:'rgba(100,220,180,0.07)',border:'1px solid rgba(100,220,180,0.2)',borderRadius:12,padding:'12px 18px',fontSize:12,color:'rgba(255,255,255,0.65)'}}>
+        🎯 Southwest's operational excellence is the result of deliberate strategic choices that all reinforce each other.
+      </div>
+    </div>
+  );
+}
+
+function Screen19() {
+  return (
+    <div className="screen">
+      <div className="screen-tag">Screen 19 of 20</div>
+      <div className="screen-heading">Trade-offs & Strategic Fit</div>
+      <div className="screen-sub" style={{marginBottom:14}}>Southwest's durability comes from its system of aligned choices.</div>
+      <div style={{flex:1,display:'flex',flexDirection:'column',gap:14}}>
+        <div style={{display:'flex',gap:14,alignItems:'stretch'}}>
+          <div className="tradeoff-box yes">
+            <div style={{fontSize:28}}>✅</div>
+            <div className="tradeoff-title">What SW Does</div>
+            <div className="tradeoff-items">Single aircraft type<br/>No assigned seating<br/>Point-to-point routes<br/>No first class<br/>No meals</div>
+          </div>
+          <div style={{display:'flex',alignItems:'center',fontSize:24,color:'rgba(255,255,255,0.15)'}}>⟷</div>
+          <div className="tradeoff-box no">
+            <div style={{fontSize:28}}>❌</div>
+            <div className="tradeoff-title">What SW Gives Up</div>
+            <div className="tradeoff-items">Premium passengers<br/>Long-haul routes<br/>Cargo revenue<br/>Interline partnerships<br/>Loyalty tiers</div>
+          </div>
+        </div>
+        <div style={{background:'rgba(245,184,0,0.08)',border:'2px solid rgba(245,184,0,0.25)',borderRadius:14,padding:'18px 22px'}}>
+          <div style={{fontSize:14,fontWeight:700,color:'#F5B800',marginBottom:6}}>🔗 Why Fit Creates Sustainability</div>
+          <div style={{fontSize:13,color:'rgba(255,255,255,0.75)',lineHeight:1.6}}>Southwest's activities reinforce each other. A competitor can't copy one piece — they'd have to copy everything simultaneously. This is the ultimate barrier to imitation.</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Screen20({ onRestart }) {
+  return (
+    <div className="screen">
+      <div className="completion-screen">
+        <div className="trophy">🏆</div>
+        <div style={{fontSize:'clamp(28px,4vw,44px)',fontWeight:800,color:'white'}}>Course Complete!</div>
+        <div style={{fontSize:16,color:'rgba(255,255,255,0.65)',maxWidth:'460px'}}>You've mastered the fundamentals of Business Strategy — from Porter's frameworks to Southwest Airlines.</div>
+        <div className="cert-badge">
+          <div style={{fontSize:36}}>🎓</div>
+          <div>
+            <div className="cert-badge-title">Business Strategy Certificate</div>
+            <div className="cert-badge-sub">20 screens · 5 activities · 4 quizzes · 1 case study</div>
+          </div>
+        </div>
+        <button className="start-btn" onClick={onRestart} style={{marginTop:4,fontSize:15}}>
+          ↺ Restart Course
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* ════════════════════════════════════════════
+   QUIZ COMPONENT
+═══════════════════════════════════════════════ */
+function QuizScreen({ quizNum, questions, onComplete }) {
+  const [answers, setAnswers] = useState({});
+  const [submitted, setSubmitted] = useState(false);
+
+  const allAnswered = questions.every((_,i) => answers[i] !== undefined);
+  const score = submitted ? questions.filter((q,i)=>answers[i]===q.correct).length : 0;
+
+  const select = (qIdx, optIdx) => {
+    if (submitted) return;
+    setAnswers(p=>({...p,[qIdx]:optIdx}));
+  };
+
+  return (
+    <div className="quiz-screen">
+      <div className="quiz-header-band">
+        <div className="quiz-badge">Quiz {quizNum}</div>
+        <div>
+          <div className="quiz-title">Knowledge Check</div>
+          <div className="quiz-subtitle">Answer all questions, then submit.</div>
+        </div>
+      </div>
+
+      <div className="quiz-body">
+        {submitted && (
+          <div className="quiz-score-banner">
+            <div className="quiz-score-num">{score}/{questions.length}</div>
+            <div>
+              <div style={{fontSize:15,fontWeight:700,color:'white'}}>{score===questions.length?'Perfect score! 🎉':score>0?'Good effort — review the explanations below.':'Keep studying — you\'ve got this!'}</div>
+              <div className="quiz-score-label">{score===questions.length?'All answers correct.':'Check the highlighted answers.'}</div>
+            </div>
+          </div>
+        )}
+
+        {questions.map((q,qi)=>(
+          <div key={qi} className="quiz-question-block">
+            <div className="quiz-q-num">Question {qi+1} of {questions.length}</div>
+            <div className="quiz-q-text">{q.text}</div>
+            <div className="quiz-options">
+              {q.options.map((opt,oi)=>{
+                let cls='quiz-option';
+                if(answers[qi]===oi) cls+=' selected';
+                if(submitted && oi===q.correct) cls+=' correct';
+                if(submitted && answers[qi]===oi && oi!==q.correct) cls+=' wrong';
+                return (
+                  <button key={oi} className={cls} onClick={()=>select(qi,oi)}>
+                    <div className="quiz-option-letter">{['A','B','C','D'][oi]}</div>
+                    {opt}
+                  </button>
+                );
+              })}
+            </div>
+            {submitted && (
+              <div className={`quiz-feedback ${answers[qi]===q.correct?'ok':'bad'}`}>
+                {answers[qi]===q.correct ? '✓ Correct! ' : '✗ Incorrect. '}{q.explanation}
+              </div>
+            )}
+          </div>
+        ))}
+
+        {!submitted ? (
+          <button className="quiz-submit-btn" disabled={!allAnswered} onClick={()=>setSubmitted(true)}>
+            Submit Answers →
+          </button>
+        ) : (
+          <button className="quiz-submit-btn" onClick={onComplete} style={{background:'#4ade80',color:'#0d2000'}}>
+            Continue Course →
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ════════════════════════════════════════════
+   COURSE DATA
+═══════════════════════════════════════════════ */
+const QUIZZES = {
+  // After screen index 3 (0-based), i.e. after Screen4
+  q1: {
+    quizNum: 1,
+    questions: [
+      {
+        text: 'According to Michael Porter, strategy is primarily about…',
+        options: ['Outperforming every rival on all dimensions','Creating a unique and valuable position','Maximizing short-term market share','Reducing all costs to zero'],
+        correct: 1,
+        explanation: 'Porter defines strategy as being unique — not simply being the best. Uniqueness creates a defensible position.'
+      },
+      {
+        text: 'Which of the following is a characteristic of STRATEGY (not just competing)?',
+        options: ['Benchmarking against industry leaders','Winning on every competitive dimension','Making deliberate trade-offs about what NOT to do','Imitating the market leader'],
+        correct: 2,
+        explanation: 'Trade-offs are the essence of strategy. They prevent straddling and make a position hard to imitate.'
+      },
+    ]
+  },
+  q2: {
+    quizNum: 2,
+    questions: [
+      {
+        text: 'Which level of strategy answers "How do we compete in this market?"',
+        options: ['Corporate strategy','Functional strategy','Business strategy','Operational strategy'],
+        correct: 2,
+        explanation: 'Business-level strategy defines how a specific unit competes — through positioning, pricing, and differentiation.'
+      },
+      {
+        text: 'Economic value (V – C) is created when…',
+        options: ['Cost equals willingness to pay','Willingness to pay exceeds the cost of production','Cost exceeds willingness to pay','Revenue equals total expenses'],
+        correct: 1,
+        explanation: 'Value is created when V > C. The firm can share this surplus with customers (lower price) or capture it as profit.'
+      },
+    ]
+  },
+  q3: {
+    quizNum: 3,
+    questions: [
+      {
+        text: 'What does Porter call a firm that tries to be BOTH low-cost AND differentiated simultaneously?',
+        options: ['Focused','Hybrid','Stuck in the middle','Ambidextrous'],
+        correct: 2,
+        explanation: '"Stuck in the middle" firms commit to no clear position — they end up with high costs AND no premium, performing worse than focused competitors.'
+      },
+      {
+        text: 'Which of Porter\'s Five Forces represents competition from products in OTHER industries?',
+        options: ['Competitive rivalry','Substitutes','New entrants','Buyer power'],
+        correct: 1,
+        explanation: 'Substitutes are products from different industries that meet the same customer need — e.g., video calls substituting for airline travel.'
+      },
+    ]
+  },
+  q4: {
+    quizNum: 4,
+    questions: [
+      {
+        text: 'Which network model does Southwest Airlines use?',
+        options: ['Hub-and-spoke','Point-to-point','Star routing','Mixed hub network'],
+        correct: 1,
+        explanation: 'Southwest flies direct city-to-city routes (point-to-point), which enables faster turnarounds and prevents delay cascades.'
+      },
+      {
+        text: "Southwest's consistent profitability is primarily attributed to…",
+        options: ['Premium pricing and first-class cabins','Government subsidies and route protection','A focused low-cost strategy with aligned activities','International long-haul expansion'],
+        correct: 2,
+        explanation: 'Southwest succeeds through a focused low-cost strategy where every activity — single aircraft type, no meals, fast turnarounds — reinforces the others.'
+      },
+    ]
+  }
+};
+
+const VOICEOVERS = [
+  "Welcome to this course on Business Strategy. In this program, you will learn how organizations build competitive advantage using structured strategic frameworks.",
+  "By the end of this course, you will understand strategy as creating unique value, explore strategic positioning, and apply concepts through a real-world case.",
+  "According to Michael E. Porter, strategy is about being unique — not simply being the best. It requires deliberate choices and trade-offs, and all activities must align to create value.",
+  "Strategy focuses on creating unique value, while competing focuses on outperforming rivals. Drag each statement to the correct category — take your time.",
+  "Time for a knowledge check! Answer both questions, then submit to see your score.",
+  "Strategy operates at three levels. Corporate defines scope, business defines how to compete, and functional supports execution. Click each level to explore.",
+  "Each level of strategy answers critical questions that guide organizational decisions. Flip each card to reveal the answer.",
+  "Business strategy focuses on defining customers, identifying their needs, and deciding how to deliver value better than competitors.",
+  "Economic value is created when customer willingness to pay exceeds the cost of production. Move the sliders to explore the relationship.",
+  "Time for another knowledge check — test what you've learned about levels of strategy and value creation.",
+  "Firms must choose a clear position — either cost leadership or differentiation. Trying both often leads to failure.",
+  "Straddling occurs when firms fail to commit to a clear strategy, leading to poor performance.",
+  "Cost leadership is achieved through efficiency, scale, and experience.",
+  "Porter's Five Forces helps analyze industry competition and profitability. Click each force to learn more.",
+  "Time for quiz three — test your knowledge of positioning and the five forces.",
+  "Southwest Airlines is a unique success story with decades of profitability in a challenging industry.",
+  "Low-cost carriers focus on efficiency, while full-service carriers focus on differentiation.",
+  "Southwest's point-to-point model reduces delays and costs compared to hub-and-spoke systems.",
+  "The airline industry is historically low-profit, yet Southwest stands out due to its strategic model.",
+  "Quiz four — let's check your understanding of the Southwest Airlines case.",
+  "Southwest aligns all activities to support its low-cost strategy.",
+  "Fast turnaround is a key operational advantage that drives cost savings and efficiency. Click each tile to explore.",
+  "Southwest's success comes from making clear trade-offs and ensuring all activities fit together.",
+  "Congratulations! You have completed the Business Strategy Course. Well done!"
+];
+
+const SECTION_NAMES = [
+  'Introduction','Introduction','Core Concepts','Core Concepts','Quiz 1',
+  'Strategy Levels','Strategy Levels','Business Strategy','Business Strategy','Quiz 2',
+  'Positioning','Positioning','Cost Leadership','Five Forces','Quiz 3',
+  'Southwest Case','Southwest Case','Southwest Case','Southwest Case','Quiz 4',
+  'Southwest Case','Southwest Case','Southwest Case','Completion'
+];
+
+/* ════════════════════════════════════════════
+   MAIN APP
+═══════════════════════════════════════════════ */
+function App() {
+  const [idx, setIdx] = useState(0);
+  useEffect(() => {
+    window.__setSlideIdx = setIdx;
+    if (window.__pendingSlide !== null && window.__pendingSlide !== undefined) {
+      setIdx(window.__pendingSlide);
+      window.__pendingSlide = null;
+    }
+    return () => { window.__setSlideIdx = null; };
+  }, [setIdx]);
+  const { speak, stop, speaking, muted, toggleMute } = useTTS();
+  const TOTAL = 24; // 20 content + 4 quizzes
+
+  // Build item list: content screens interleaved with quizzes
+  // Indices: 0-3=Screens1-4, 4=Quiz1, 5-8=Screens5-8, 9=Quiz2,
+  //          10-13=Screens9-12, 14=Quiz3, 15-18=Screens13-16, 19=Quiz4,
+  //          20-23=Screens17-20
+  const QUIZ_POSITIONS = { 4:'q1', 9:'q2', 14:'q3', 19:'q4' };
+
+  useEffect(() => {
+    speak(VOICEOVERS[idx] || '');
+    return () => stop();
+  }, [idx]);
+
+  const goNext = () => setIdx(s => Math.min(s+1, TOTAL-1));
+  const goPrev = () => setIdx(s => Math.max(s-1, 0));
+
+  const progress = (idx / (TOTAL-1)) * 100;
+  const isQuiz = QUIZ_POSITIONS[idx];
+
+  const contentScreens = [
+    <Screen1 onNext={goNext}/>, // 0
+    <Screen2/>,                 // 1
+    <Screen3/>,                 // 2
+    <Screen4/>,                 // 3
+    null,                       // 4 = Quiz1
+    <Screen5/>,                 // 5
+    <Screen6/>,                 // 6
+    <Screen7/>,                 // 7
+    <Screen8/>,                 // 8
+    null,                       // 9 = Quiz2
+    <Screen9/>,                 // 10
+    <Screen10/>,                // 11
+    <Screen11/>,                // 12
+    <Screen12/>,                // 13
+    null,                       // 14 = Quiz3
+    <Screen13/>,                // 15
+    <Screen14/>,                // 16
+    <Screen15/>,                // 17
+    <Screen16/>,                // 18
+    null,                       // 19 = Quiz4
+    <Screen17/>,                // 20
+    <Screen18/>,                // 21
+    <Screen19/>,                // 22
+    <Screen20 onRestart={()=>setIdx(0)}/>, // 23
+  ];
+
+  const currentContent = isQuiz
+    ? <QuizScreen {...QUIZZES[isQuiz]} onComplete={goNext}/>
+    : contentScreens[idx];
+
+  return (
+    <div className="course-shell">
+      <GeoBg/>
+
+      {/* TOP BAR */}
+      <div className="top-bar">
+        <div style={{display:'flex',alignItems:'center',gap:10,flexShrink:0}}>
+          <div className="logo-icon">BS</div>
+          <div>
+            <div className="course-title-bar">Business Strategy</div>
+            <div className="section-tag">{SECTION_NAMES[idx]}</div>
+          </div>
+        </div>
+        <div style={{width:1,height:28,background:'rgba(255,255,255,0.12)',flexShrink:0}}/>
+
+        <div className="progress-area">
+          <div className="progress-track">
+            <div className="progress-fill" style={{width:`${progress}%`}}/>
+          </div>
+          <div className="progress-label">{Math.round(progress)}%</div>
+        </div>
+
+        <div className="screen-counter">{idx+1}/{TOTAL}</div>
+
+        {/* TTS Controls */}
+        <div className="tts-controls">
+          {speaking && !muted && (
+            <div className="tts-wave">
+              <span/><span/><span/><span/><span/>
+            </div>
+          )}
+          <button className={`tts-btn ${muted?'muted':''}`} onClick={toggleMute} title={muted?'Unmute narration':'Mute narration'}>
+            {muted ? '🔇' : '🔊'}
+          </button>
+        </div>
+      </div>
+
+      {/* MAIN */}
+      <div className="screen-content" key={idx}>
+        {currentContent}
+      </div>
+
+      {/* BOTTOM NAV */}
+      <div className="bottom-nav">
+        <button className="nav-btn prev" onClick={goPrev} disabled={idx===0}>← Back</button>
+        <div className="vo-box">🎙 {VOICEOVERS[idx]}</div>
+        {!isQuiz && (
+          <button className="nav-btn next" onClick={goNext} disabled={idx===TOTAL-1}>
+            {idx===TOTAL-2?'Finish ✓':'Next →'}
+          </button>
+        )}
+        {isQuiz && <div style={{width:100}}/>}
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
